@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-#[Route('/api/weather', name: 'app_weather')]
+#[Route('/api', name: 'app_weather')]
 class WeatherController extends AbstractController
 {
 
@@ -17,7 +17,7 @@ class WeatherController extends AbstractController
     ) {
     }
 
-    #[Route('/', name: 'api_weather', methods: ['GET'])]
+    #[Route('/weather', name: 'api_weather', methods: ['GET'])]
     public function getWeather(Request $request): JsonResponse
     {
         $latitude = $request->query->get('latitude');
@@ -39,7 +39,9 @@ class WeatherController extends AbstractController
                 'query' => [
                     'latitude' => $latitude,
                     'longitude' => $longitude,
-                    'hourly' => 'temperature_2m'
+                    'hourly' => ['temperature_2m', 'weather_code', 'sunshine_duration'],
+                    'timezone' => "Europe/Berlin",
+                    'forecast_days' => 1
                 ]
             ]);
 
@@ -48,7 +50,8 @@ class WeatherController extends AbstractController
         } catch (\Exception $e) {
             return $this->json(['error' => 'Failed to retrieve weather data'], 500);
         }
-
-
     }
+
+
+
 }
